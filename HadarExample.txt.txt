@@ -1,1 +1,2 @@
 HadarExample from folder
+HadarExample from cloud
