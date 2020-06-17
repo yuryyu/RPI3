@@ -29,6 +29,9 @@ def process_message(client,msg,topic):
             print('Door opened!')
             if stranger():
                 send_alarm(client)
+        else:
+            print('Door closed!')
+            send_msg(client)
 
 def stranger():
     return True
@@ -36,12 +39,18 @@ def stranger():
 def send_alarm(client):
     print("Sending alarm message")
     tnow=time.localtime(time.time())
-    client.publish(pub_topic,time.asctime(tnow)+' Alarm! Penetration! Call to Police!')    
+    client.publish(pub_topic,time.asctime(tnow)+' Alarm! Penetration! Call to Police!')  
+
+def send_msg(client):
+    print("Sending info message")
+    tnow=time.localtime(time.time())
+    client.publish(pub_topic,time.asctime(tnow)+' Info! door closed!')   
+
 
 def main():    
 
     r=random.randrange(1,100000)
-    ID="RPI4_-"+str(r)
+    ID="RPI3_-"+str(r)
 
     client = mqtt.Client(ID, clean_session=True) # create new client instance
     # define callback function
