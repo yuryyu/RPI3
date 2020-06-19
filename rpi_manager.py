@@ -5,7 +5,6 @@ import sys, getopt
 import logging
 import queue
 import random
-
 from rpi_init import *
 
 def on_log(client, userdata, level, buf):
@@ -47,10 +46,9 @@ def send_msg(client):
     client.publish(pub_topic,time.asctime(tnow)+' Info! door closed!')   
 
 
-def main():    
-
+def client_init(cname):
     r=random.randrange(1,100000)
-    ID="RPI3_-"+str(r)
+    ID=cname+str(r)
 
     client = mqtt.Client(ID, clean_session=True) # create new client instance
     # define callback function
@@ -63,6 +61,11 @@ def main():
         client.username_pw_set(username, password)        
     print("Connecting to broker ",broker_ip)
     client.connect(broker_ip,port)     #connect to broker
+    return client
+
+def main():    
+    cname = "RPI3_Manager-"
+    client = client_init(cname)
 
     # main monitoring loop
     client.loop_start()  #Start loop

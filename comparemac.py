@@ -1,5 +1,6 @@
 
-def main():
+def compare_files():
+  try:
     f=open("connected.txt","r")
     f_counter=0
     r=f.read()
@@ -34,7 +35,7 @@ def main():
     print(a1)
 
 
-
+    # doesn't work properly - logical fail - rebuild it!
     s=0
     while s<f_counter:
         u=0
@@ -48,13 +49,18 @@ def main():
                     if u==t_counter:
                         print('An unauthorized person connected to the network')
                         print(a1[s])
-                        return True
+                        return 'Intruder detected'
                         if s!=f_counter:
                             s=s+1
     print('done')
-    return False
+    return 'None detected'
+  except:
+    return 'None detected'
 
 
 if __name__ == "__main__":
-    main()
-   
+    try:
+        compare_files()
+    except:
+        pass
+  
