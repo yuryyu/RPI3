@@ -22,7 +22,8 @@ def scan_net():
    command = "arp-scan --retry=8 --ignoredups -I " + netinterface + " --localnet"
    rez = wait_timeout(subprocess.Popen(command, shell=True,
                                        stdout=subprocess.PIPE).stdout.read(), waittime)
-   if rez==1,return
+   if rez==1:
+      return
    rez = str(rez)   
    l = rez.split()
    num = len(l)
