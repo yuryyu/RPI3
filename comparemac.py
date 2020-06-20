@@ -35,25 +35,32 @@ def compare_files():
     print(a1)
 
 
-    # doesn't work properly - logical fail - rebuild it!
-    s=0
-    while s<f_counter:
-        u=0
-        while u<t_counter:
-            if s!=f_counter:
-                if a1[s]==a2[u]:
-                    s=s+1
-                    u=0
-                else:
-                    u=u+1
-                    if u==t_counter:
-                        print('An unauthorized person connected to the network')
-                        print(a1[s])
-                        return 'Intruder detected'
-                        if s!=f_counter:
-                            s=s+1
-    print('done')
-    return 'None detected'
+    if len(list(set(a1)-set(a2)))==0:
+      print('None detected')
+      return 'None detected'
+    else:
+      print('Intruder detected')
+      return 'Intruder detected in your Home network!'    
+
+  #  the next part doesn't work properly - logical fail - rebuild it!
+  #   s=0
+  #   while s<f_counter:
+  #       u=0
+  #       while u<t_counter:
+  #           if s!=f_counter:
+  #               if a1[s]==a2[u]:
+  #                   s=s+1
+  #                   u=0
+  #               else:
+  #                   u=u+1
+  #                   if u==t_counter:
+  #                       print('An unauthorized person connected to the network')
+  #                       print(a1[s])
+  #                       return 'Intruder detected'
+  #                       if s!=f_counter:
+  #                           s=s+1
+  #   print('done')
+  #   return 'None detected'
   except:
     return 'None detected'
 

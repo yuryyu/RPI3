@@ -8,43 +8,30 @@ import random
 from rpi_init import *
 
 def on_log(client, userdata, level, buf):
-        print("log: "+buf)
+    print("log: "+buf)
 def on_connect(client, userdata, flags, rc):
     if rc==0:
         print("connected OK")
     else:
         print("Bad connection Returned code=",rc)
 def on_disconnect(client, userdata, flags, rc=0):
-        print("DisConnected result code "+str(rc))
+    print("DisConnected result code "+str(rc))
 def on_message(client,userdata,msg):
-        topic=msg.topic
-        m_decode=str(msg.payload.decode("utf-8","ignore"))
-        process_message(client,m_decode,topic)
-        print(m_decode)
+    topic=msg.topic
+    m_decode=str(msg.payload.decode("utf-8","ignore"))
+    process_message(client,m_decode,topic)
+    print(m_decode)
     
 def process_message(client,msg,topic):
-        print("message processed: ",topic,msg)
-        if msg_device in msg:
-            print('Door opened!')
-            if stranger():
-                send_alarm(client)
-        else:
-            print('Door closed!')
-            send_msg(client)
-
-def stranger():
-    return True
-
-def send_alarm(client):
-    print("Sending alarm message")
+    print("message processed: ",topic,msg)
+    for ms in msg_device:
+        if ms in msg:
+            send_msg(client, pub_topic, msg)
+            
+def send_msg(client, topic, message):
+    print("Sending message: " + message)
     tnow=time.localtime(time.time())
-    client.publish(pub_topic,time.asctime(tnow)+' Alarm! Penetration! Call to Police!')  
-
-def send_msg(client):
-    print("Sending info message")
-    tnow=time.localtime(time.time())
-    client.publish(pub_topic,time.asctime(tnow)+' Info! door closed!')   
-
+    client.publish(topic,time.asctime(tnow) + message)   
 
 def client_init(cname):
     r=random.randrange(1,100000)
@@ -69,7 +56,8 @@ def main():
 
     # main monitoring loop
     client.loop_start()  #Start loop
-    client.subscribe(sub_topic)
+    for tp in sub_topic:
+        client.subscribe(tp)
     try:
         while conn_time==0:
             pass
