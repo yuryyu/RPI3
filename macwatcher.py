@@ -19,40 +19,24 @@ def wait_timeout(proc, seconds):
       time.sleep(interval)
 
 def scan_net():
-   command = "arp-scan --retry=8 --ignoredups -I " + netinterface + " --localnet"
+   command = "sudo arp-scan --retry=8 --ignoredups -I " + netinterface + " --localnet"
    rez = subprocess.Popen(command, shell=True,   
-                                       stdout=subprocess.PIPE).stdout.read()
-   if rez==1:
-      return
-   rez = str(rez)   
-   l = rez.split()
-   num = len(l)
-   i = 0
-   for l[i] in l:
-      if l[i] != 'packets':
-         i = i+1
-      else:
-         num_of_devices = l[i-1]
-         break
-   num_of_devices = int(num_of_devices)
-   ma = 14
-   print(l[ma])
-   f = open('connected.txt', 'w')
-   f.write(l[ma])
-   f.write('\n')
-   ma = ma+1
-   num_of_devices_real = 0
-   while (l[ma] != num_of_devices) & (l[ma+1] != 'packets'):
-      y = list(l[ma])
-      if y[2] == ':':
-         f.write(l[ma])
-         f.write('\n')
-         print(l[ma])
-         ma = ma+1
-         num_of_devices_real = num_of_devices_real+1
-      else:
-         ma = ma+1
-   f.close()
+                                       stdout=subprocess.PIPE).stdout.read()   
+   rez=str(rez)
+   lns= rez.split('\\n')   
+   macs=[]
+   for ln in lns:
+      if netstart not in ln:
+         continue
+      spln=ln.split('\\t')[1]
+      print(spln)
+      macs.append(spln) 
+   write2file(macs)  
+
+def write2file(maclist,filename ='connected.txt'):    
+   with open(filename, 'w') as f:
+    for item in maclist:
+        f.write("%s\n" % item)
 
 def send2manager(client, comp):
    # mqtt client
@@ -75,3 +59,5 @@ if __name__ == "__main__":
    except KeyboardInterrupt:
       client.disconnect()  # disconnect from broker
       print("interrrupted by keyboard")
+   finally: 
+      client.disconnect()

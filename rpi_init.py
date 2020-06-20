@@ -15,3 +15,4 @@ pub_topic = 'home/state'
 msg_device = ['opened', 'Intruder']
 waittime = 30
 netinterface = 'wlan0' #'br0'
+netstart = '192.168.1.'
