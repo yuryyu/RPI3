@@ -7,6 +7,9 @@ import queue
 import random
 from rpi_init import *
 
+global isadmin
+isadmin=False
+
 def on_log(client, userdata, level, buf):
     print("log: "+buf)
 def on_connect(client, userdata, flags, rc):
@@ -20,17 +23,32 @@ def on_message(client,userdata,msg):
     topic=msg.topic
     m_decode=str(msg.payload.decode("utf-8","ignore"))
     process_message(client,m_decode,topic)
-    print(m_decode)
+    #print(m_decode)
     
 def process_message(client,msg,topic):
-    print("message processed: ",topic,msg)
-    for ms in msg_device:
-        if ms in msg:
-            send_msg(client, pub_topic, msg)
-            
+    global isadmin
+    #print("message processed: ",topic,msg)
+
+    if 'admin presented' in msg:
+        isadmin=True
+        send_msg(client, pub_topic, 'Info: Admin mac adress is presented in home network')
+    if 'None admin' in msg:
+        isadmin=False
+        send_msg(client, pub_topic, 'Info: No Admin mac adress in home network')
+
+    if 'door opened' in msg:
+        if not isadmin:
+            send_msg(client, pub_topic, 'Alarm: Door opened and No Admin mac adress in home network!')
+        else:
+            send_msg(client, pub_topic, 'Warning: Door opened and Admin mac adress in home network!')
+
+    if 'Intruder' in msg:        
+        send_msg(client, pub_topic, 'Alarm: Intruder is in home network! Urgently change AP access credentials!')
+
+           
 def send_msg(client, topic, message):
     print("Sending message: " + message)
-    tnow=time.localtime(time.time())
+    tnow=time.localtime(time.time())    
     client.publish(topic,time.asctime(tnow) + message)   
 
 def client_init(cname):
@@ -41,7 +59,7 @@ def client_init(cname):
     # define callback function
     client.on_connect=on_connect  #bind call back function
     client.on_disconnect=on_disconnect
-    client.on_log=on_log
+    #client.on_log=on_log
     client.on_message=on_message
 
     if username !="":

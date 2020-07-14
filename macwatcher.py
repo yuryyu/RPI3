@@ -42,7 +42,6 @@ def send2manager(client, comp):
    # mqtt client
    tnow = time.localtime(time.time())
    msg = 'Watcher Msg: ' + str(comp) + ' at ' + time.asctime(tnow)
-
    client.publish(sub_topic[1], msg)
    print('message ' + msg + ' sent')
    pass
@@ -52,10 +51,13 @@ if __name__ == "__main__":
    client = client_init(cname)
    try:
       while conn_time == 0:
-         scan_net()
+         #scan_net()
+         time.sleep(10)
          print('main procedure ended peacefully')
-         send2manager(client, comparemac.compare_files())
-         print('send2manager procedure ended peacefully, next loop started')
+         send2manager(client, comparemac.compare_files()[1])
+         print('send2manager procedure for admin presence update ended peacefully, next loop started')
+         send2manager(client, comparemac.compare_files()[0])
+         print('send2manager procedure for intruder presence update ended peacefully, next loop started')
    except KeyboardInterrupt:
       client.disconnect()  # disconnect from broker
       print("interrrupted by keyboard")
