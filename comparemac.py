@@ -59,4 +59,3 @@ if __name__ == "__main__":
         print(compare_files()[1])
     except:
         pass
-  

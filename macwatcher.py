@@ -51,7 +51,7 @@ if __name__ == "__main__":
    client = client_init(cname)
    try:
       while conn_time == 0:
-         #scan_net()
+         scan_net()
          time.sleep(10)
          print('main procedure ended peacefully')
          send2manager(client, comparemac.compare_files()[1])

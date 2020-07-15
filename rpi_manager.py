@@ -8,6 +8,10 @@ import random
 from rpi_init import *
 
 global isadmin
+global y
+global x
+x=False
+y=False
 isadmin=False
 
 def on_log(client, userdata, level, buf):
@@ -27,25 +31,61 @@ def on_message(client,userdata,msg):
     
 def process_message(client,msg,topic):
     global isadmin
+    global y
+    global x
     #print("message processed: ",topic,msg)
 
     if 'admin presented' in msg:
         isadmin=True
-        send_msg(client, pub_topic, 'Info: Admin mac adress is presented in home network')
+        send_msg(client, pub_topic, 'Info: Admin mac address is presented in the home network')
     if 'None admin' in msg:
         isadmin=False
-        send_msg(client, pub_topic, 'Info: No Admin mac adress in home network')
+        send_msg(client, pub_topic, 'Info: Admin mac address is NOT presented in the home network')
 
-    if 'door opened' in msg:
+    if 'Intruder' in msg:
+        x=True
+    elif 'None detected' in msg:
+        x=False
+
+    if 'opened' in msg:
+        y=True
+    else:
+        y=False
+
+    if 'opened' in msg:
         if not isadmin:
-            send_msg(client, pub_topic, 'Alarm: Door opened and No Admin mac adress in home network!')
+            send_msg(client, pub_topic, 'Alarm: Door opened and Admin mac address is NOT presented in the home network!')
         else:
-            send_msg(client, pub_topic, 'Warning: Door opened and Admin mac adress in home network!')
+            send_msg(client, pub_topic, 'Warning: Door opened and Admin mac address is presented in the home network!')
 
-    if 'Intruder' in msg:        
-        send_msg(client, pub_topic, 'Alarm: Intruder is in home network! Urgently change AP access credentials!')
 
-           
+
+    if not y:
+        if x:
+            send_msg(client, pub_topic, 'Alarm:Penetration to the WIFI only')
+    
+    if y:
+        if x:
+            send_msg(client, pub_topic, 'Alarm:Penetration')
+
+
+    if y:
+        if not x:
+            send_msg(client, pub_topic, 'info:door opened')
+
+
+
+
+
+
+
+
+    
+    
+
+
+    
+                   
 def send_msg(client, topic, message):
     print("Sending message: " + message)
     tnow=time.localtime(time.time())    
