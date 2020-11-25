@@ -14,4 +14,4 @@ sub_topic = ['door/state','watcher/state']
 pub_topic = 'home/state'
 waittime = 30
 netinterface = 'wlan0' #'br0'
-netstart = '192.168.1.'
+netstart = '10.0.0.'
